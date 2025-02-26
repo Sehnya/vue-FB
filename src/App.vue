@@ -1,30 +1,39 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
-  <router-view />
+  <div id="app">
+    <h1>Vue + Firebase App</h1>
+    <ul>
+      <li v-for="doc in docs" :key="doc.id">
+        {{ doc.data.name }}
+      </li>
+    </ul>
+  </div>
 </template>
 
+<script>
+import { db } from "./firebase";
+
+export default {
+  name: "App",
+  data() {
+    return {
+      docs: [],
+    };
+  },
+  async mounted() {
+    try {
+      // Fetch documents from a Firestore collection named "users"
+      const querySnapshot = await db.collection("users").get();
+      this.docs = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        data: doc.data(),
+      }));
+    } catch (error) {
+      console.error("Error fetching documents: ", error);
+    }
+  },
+};
+</script>
+
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-nav {
-  padding: 30px;
-}
-
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-nav a.router-link-exact-active {
-  color: #42b983;
-}
+/* Your styles here */
 </style>
